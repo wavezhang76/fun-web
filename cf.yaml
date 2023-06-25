@@ -5,19 +5,19 @@ Description: CloudFormation template that deploys web-app
 Parameters:
   ServiceName:
     Type: String
-    Default: fun-web-app
-    Description: Fun web app.
+    Default: crazy-fun-web
+    Description: Crazy fun web.
 Resources:
   Service:
     Metadata:
-      'aws:apprunner:description': 'hello-app-runner example service'
+      'aws:apprunner:description': 'crazy fun web service'
     Type: AWS::AppRunner::Service
     Properties:
       ServiceName: !Ref ServiceName
       SourceConfiguration:
         AutoDeploymentsEnabled: false
         ImageRepository:
-          ImageIdentifier: public.ecr.aws/aws-containers/hello-app-runner:latest
+          ImageIdentifier: public.ecr.aws/aws-containers/crazy-fun-web:latest
           ImageRepositoryType: ECR_PUBLIC
           ImageConfiguration:
             Port: 8000
