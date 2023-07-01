@@ -38,8 +38,10 @@ body {
 
 /* Fake image */
 .fakeimg {
-  width: 100%;
+  object-fit: contain;
+  /*width: 100%;
   padding: 20px;
+  */
 }
 
 /* Add a card effect for articles */
@@ -76,19 +78,22 @@ body {
 <body>
 
 <div class="header">
-  <h2>Eric's Blog</h2>
+  <h2>News Stand</h2>
 </div>
-
+<form action="/" method="post">
+  <input type="text" name="search" placeholder="Search keyword" required />
+  <input type="submit" value="Search News" />
+</form>
 <div class="row">
   <div class="leftcolumn">
-    {% for blog in blogs %}
+    {% for article in articles %}
     <div class="card">
-      <h2>{{blog.title}}</h2>
-      <h5>{{blog.timestamp}}</h5>
-      {% for photo_url in blog.photo_urls %}
-      <img class='fakeimg' style="height:200px;" src="{{ photo_url }}" />
-      {% endfor %}
-      <p>{{blog.content}}</p>
+      <a href="{{ article.link }}">{{article.title}}</a>
+      <h5>{{article.published_date}}</h5>
+      {% if 'media' in article %}
+      <img class='fakeimg' src="{{ article.media }}" />
+      {% endif %}
+      <p>{{article.summary}}</p>
     </div>
     {% endfor %}
   </div>
