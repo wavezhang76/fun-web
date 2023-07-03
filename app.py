@@ -12,15 +12,16 @@ from starlette.staticfiles import StaticFiles
 from starlette.responses import PlainTextResponse, JSONResponse
 from starlette_exporter import PrometheusMiddleware, handle_metrics
 
-from json import loads, dumps
-from requests import get
+import json
+#from requests import get
 from os import getenv, urandom, path, environ
-#from PIL import Image
 import aws
+import urllib3
 
 templates = Jinja2Templates(directory='templates')
 
-newscatcherapi = NewsCatcherApiClient(x_api_key=getenv('NEWS_API_KEY')) 
+#newscatcherapi = NewsCatcherApiClient(x_api_key=getenv('NEWS_API_KEY')) 
+http = urllib3.PoolManager()
 
 global_state = {
     "INITIALIZED": False
@@ -46,12 +47,15 @@ async def index(request):
     if request.method == "POST":
         form = await request.form()
         keywords = form["search"]
-        articles = newscatcherapi.get_search(q=keywords,
-                                         lang='en',
-                                         countries='US',
-                                         page_size=100)
-        #print(articles)                                         
-        return templates.TemplateResponse('index.html', {'request': request, 'articles':  articles['articles']})
+        #articles = newscatcherapi.get_search(q=keywords,
+        #                                 lang='en',
+        #                                 countries='US',
+        #                                 page_size=100)
+        #print(articles)
+
+        response = http.request("GET", f"https://newsdata.io/api/1/news?apikey={getenv('NEWSDATA_API_KEY')}&q={keywords}&language=en")
+        data_json=json.loads(response.data)
+        return templates.TemplateResponse('index.html', {'request': request, 'articles':  data_json['results']})
 
     if "Go-http-client" in request.headers['user-agent']:
         # Filter out health checks from the load balancer
