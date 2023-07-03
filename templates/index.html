@@ -1,3 +1,10 @@
+{% set request_url = request.url | string() %}
+{% if ( '0.0' in request_url or 'localhost' in request_url )  %}
+{% set full_url = request.url | string() %}
+{% else %}
+{% set full_url = request.url | replace("http:", "https:") | string() %}
+{% endif %}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,7 +26,7 @@ body {
   padding: 30px;
   font-size: 40px;
   text-align: center;
-  background: white;
+  /*background: white;*/
 }
 
 /* Create two unequal columns that floats next to each other */
@@ -42,6 +49,11 @@ body {
   /*width: 100%;
   padding: 20px;
   */
+}
+
+.logoimg {
+  width: 30%;
+  height: 30%;
 }
 
 /* Add a card effect for articles */
@@ -78,7 +90,7 @@ body {
 <body>
 
 <div class="header">
-  <h2>News Stand</h2>
+  <img class='logoimg' src="{{ full_url ~ 'static/logo.png' }}" />
 </div>
 <form action="/" method="post">
   <input type="text" name="search" placeholder="Search keyword" required />
@@ -88,12 +100,13 @@ body {
   <div class="leftcolumn">
     {% for article in articles %}
     <div class="card">
-      <a href="{{ article.link }}">{{article.title}}</a>
-      <h5>{{article.published_date}}</h5>
-      {% if 'media' in article %}
-      <img class='fakeimg' src="{{ article.media }}" />
+      <a href="{{ article.link }}" target="_blank">{{article.title}}</a>
+      <h5>{{article.pubDate}}</h5>
+      <p>{{article.description}}</p>
+      {% if 'image_url' in article %}
+      <img class='fakeimg' src="{{ article.image_url }}" />
       {% endif %}
-      <p>{{article.summary}}</p>
+      <p>{{article.content}}</p>
     </div>
     {% endfor %}
   </div>
@@ -114,10 +127,6 @@ body {
       <p>Some text..</p>
     </div>
   </div>
-</div>
-
-<div class="footer">
-  <h2>Footer</h2>
 </div>
 
 </body>
